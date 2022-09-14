@@ -81,6 +81,16 @@ def calculate_surplus_data(sales_data):
         surplus_data.append(surplus)
     return surplus_data
 
+def update_surplus_worksheet(surplus_data):
+    """
+    updated surplus sheet by adding surplus data in to the surplus worksheet
+    """
+    print("updating surplus worksheet...\n")
+
+    surplus_sheet = SHEET.worksheet("surplus")
+    surplus_sheet.append_row(surplus_data)
+
+    print("updated surplus worksheet successfully...\n")
 
 def main():
     """
@@ -90,7 +100,7 @@ def main():
     sales_data = [int(val) for val in data]
     update_sales_worksheet(sales_data)
     surplus_data = calculate_surplus_data(sales_data)
-    print(surplus_data)
+    update_surplus_worksheet(surplus_data)
 
 
 print("Welcome to Love Sandwitches Data Automation")
