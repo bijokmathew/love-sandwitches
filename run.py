@@ -1,5 +1,6 @@
 import gspread 
 from google.oauth2.service_account import Credentials
+from pprint import pprint
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -7,11 +8,13 @@ SCOPE = [
     "https://www.googleapis.com/auth/drive"
     ]
 CREDS = Credentials.from_service_account_file('creds.json')
-SCOPED_CREDS= CREDS.with_scopes(SCOPE)
-GSPREAD_CLIENT=gspread.authorize(SCOPED_CREDS)
+SCOPED_CREDS = CREDS.with_scopes(SCOPE)
+GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open("love_sandwiches")
 
+
 def get_sales_data():
+
     """
     Get sales figures input from the user.
     Run a while loop to collect a valid data from the user
@@ -26,11 +29,12 @@ def get_sales_data():
 
         data_str = input("Enter your data here: ")
         sales_data = data_str.split(",")
-        if validate_data(sales_data) == True:
+        if validate_data(sales_data) is True:
             print("Data is valid")
             break
         
     return sales_data
+
 
 def validate_data(values):
     """
@@ -40,12 +44,14 @@ def validate_data(values):
     """
     try:
         [int(value) for value in values]
-        if(len(values)!=6):
+        if (len(values) != 6):
             raise ValueError(f"Exactly 6 values required, you provided {len(values)}")
     except ValueError as e:
         print(f"Invalid data :{e},Please try again..")
         return False
     return True
+
+
 def update_sales_worksheet(sales_data):
     """
     update sales worksheet,add new row with list data provided
@@ -56,7 +62,30 @@ def update_sales_worksheet(sales_data):
     print("sales worksheet updated successfully...\n")
 
 
+def calculate_surplus_data(sales_data):
+    """
+    Compare sales data with stock and calculate the suplus for each item.
 
-data =get_sales_data()
-sales_data = [int(val) for val in data]
-update_sales_worksheet(sales_data)
+    Surplus = sales - stock 
+
+    -- +ve surplus --> waste
+    -- -ve surplus --> extra when stock sold out
+    """
+    print("Calculating surplus data ...\n")
+    stock = SHEET.worksheet("stock").get_all_values()
+    stock_row = stock[-1]
+    
+
+
+
+def main():
+    """
+    Rull all program functions
+    """
+    data = get_sales_data()
+    sales_data = [int(val) for val in data]
+    update_sales_worksheet(sales_data)
+    calculate_surplus_data(sales_data)
+
+print("Welcome to Love Sandwitches Data Automation")
+main()
